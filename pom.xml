@@ -7,12 +7,19 @@
     <artifactId>java-sonarqube-maven-docker</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <groupId>com.example</groupId>
+    <artifactId>simple-java-app</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonar.projectKey>java-sonarqube-docker</sonar.projectKey>
+    </properties>
+    <properties>
+    <sonar.projectKey>simple-java-app</sonar.projectKey>
+    <sonar.projectName>simple-java-app</sonar.projectName>
     </properties>
 
     <dependencies>
@@ -22,8 +29,9 @@
             <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
+        
     </dependencies>
-
+     
     <build>
         <plugins>
             <!-- Maven Surefire Plugin for running tests -->

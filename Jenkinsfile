@@ -20,12 +20,13 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar'
-                }
-            }
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            sh 'mvn clean verify sonar:sonar'
         }
+    }
+}
+
 
         stage('Docker Build') {
             steps {
