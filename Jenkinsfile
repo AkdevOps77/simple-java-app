@@ -28,21 +28,22 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    sh '''
-                    mvn verify \
-                    org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
-                    -Dsonar.projectKey=simple-java-app \
-                    -Dsonar.projectName=simple-java-app
-                    '''
+                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                        sh '''
+                        mvn verify \
+                        org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+                        -Dsonar.projectKey=simple-java-app \
+                        -Dsonar.projectName=simple-java-app \
+                        -Dsonar.login=$SONAR_TOKEN
+                        '''
+                    }
                 }
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh '''
-                docker build -t simple-java-app:latest .
-                '''
+                sh 'docker build -t simple-java-app:latest .'
             }
         }
     }
