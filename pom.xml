@@ -5,26 +5,20 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Project coordinates -->
     <groupId>com.example</groupId>
     <artifactId>simple-java-app</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Simple Java App</name>
-
-    <!-- Properties -->
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- SonarQube -->
         <sonar.projectKey>simple-java-app</sonar.projectKey>
         <sonar.projectName>simple-java-app</sonar.projectName>
     </properties>
 
-    <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -34,24 +28,27 @@
         </dependency>
     </dependencies>
 
-    <!-- Build plugins -->
     <build>
         <plugins>
+
+            <!-- Java Compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+            </plugin>
+
+            <!-- Run Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
             </plugin>
-        </plugins>
-    </build>
-    <build>
-    <plugins>
-        <plugin>
-            <groupId>org.sonarsource.scanner.maven</groupId>
-            <artifactId>sonar-maven-plugin</artifactId>
-            <version>3.11.0.3922</version>
-        </plugin>
-    </plugins>
-</build>
 
-</project>
+            <!-- SonarQube Maven Plugin -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.11.0.3922</version>
+            </plugi
+
