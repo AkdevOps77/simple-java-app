@@ -21,6 +21,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                echo "Building the Maven project..."
                 sh 'mvn clean package -DskipTests'
             }
         }
@@ -28,24 +29,31 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
-                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                        sh '''
-                        mvn verify \
-                        org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
-                        -Dsonar.projectKey=simple-java-app \
-                        -Dsonar.projectName=simple-java-app \
-                        -Dsonar.login=$SONAR_TOKEN
-                        '''
-                    }
+                    echo "Running SonarQube analysis..."
+                    sh '''
+                    mvn verify \
+                    org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
+                    -Dsonar.projectKey=simple-java-app \
+                    -Dsonar.projectName=simple-java-app \
+                    -Dsonar.login=$SONAR_TOKEN
+                    '''
                 }
             }
         }
 
         stage('Docker Build') {
-    steps {
-        sh 'sudo docker build -t simple-java-app:latest .'
-    }
-}
+            steps {
+                echo "Building Docker image..."
+                sh 'sudo docker build -t simple-java-app:latest .'
+            }
+        }
+
+        stage('Docker Run (Optional)') {
+            steps {
+                echo "Running Docker container (optional)..."
+                sh 'sudo docker run -d --name simple-java-app-container simple-java-app:latest'
+            }
+        }
     }
 
     post {
