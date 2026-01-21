@@ -1,20 +1,19 @@
 # -------- Runtime image (small & secure) --------
 FROM eclipse-temurin:17-jre
 
-# Create app user
+# Create non-root user
 RUN useradd -r -u 1001 appuser
 
 WORKDIR /app
 
-# Copy the built jar
-COPY target/simple-java-app-1.0-SNAPSHOT.jar app.jar
+# Copy jar (use wildcard to avoid version issues)
+COPY target/*.jar app.jar
 
-# Change ownership
+# Fix ownership
 RUN chown appuser:appuser app.jar
 
 USER appuser
 
-# (Optional) If app listens on a port
-# EXPOSE 8080
+EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
