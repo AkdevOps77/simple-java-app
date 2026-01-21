@@ -46,6 +46,23 @@ pipeline {
         sh 'sudo docker build -t simple-java-app:latest .'
     }
 }
+        stage('Login to ECR') {
+            steps {
+                sh '''
+                aws ecr get-login-password --region $AWS_REGION \
+                | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+                '''
+            }
+        }
+
+        stage('Push Image to ECR') {
+            steps {
+                sh '''
+                docker push $ECR_URI:$IMAGE_TAG
+                '''
+            }
+        }
+    }
     }
 
     post {
