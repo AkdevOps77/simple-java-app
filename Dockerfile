@@ -1,14 +1,20 @@
-# Use OpenJDK 17 base image
-FROM eclipse-temurin:17-jdk
+# -------- Runtime image (small & secure) --------
+FROM eclipse-temurin:17-jre
 
-# Set working directory inside the container
+# Create app user
+RUN useradd -r -u 1001 appuser
+
 WORKDIR /app
 
-# Copy the JAR built by Maven
+# Copy the built jar
 COPY target/simple-java-app-1.0-SNAPSHOT.jar app.jar
 
-# Expose port if your app needs one (optional)
+# Change ownership
+RUN chown appuser:appuser app.jar
+
+USER appuser
+
+# (Optional) If app listens on a port
 # EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
