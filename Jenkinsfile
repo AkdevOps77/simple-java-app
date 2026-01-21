@@ -23,7 +23,7 @@ pipeline {
                       mvn verify sonar:sonar \
                       -Dsonar.projectKey=simple-java-app \
                       -Dsonar.projectName=simple-java-app \
-                      -Dsonar.host.url=http://<SLAVE-2-IP>:9000 \
+                      -Dsonar.host.url=http://98.94.68.197:9000 \
                       -Dsonar.login=$SONAR_TOKEN
                     '''
                 }
