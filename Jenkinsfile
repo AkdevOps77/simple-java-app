@@ -67,3 +67,35 @@ pipeline {
         }
     }
 }
+
+    post {
+
+        always {
+
+            echo "Pipeline finished."
+
+        }
+
+        success {
+
+            mail to: 'akshay.devops77@gmail.com',
+
+                 subject: "Success: Pipeline ${currentBuild.fullDisplayName}",
+
+                 body: "Build URL: ${env.BUILD_URL}\nImage pushed to: ${ECR_REPO}"
+
+        }
+
+        failure {
+
+            mail to: 'akshay.devops77@gmail.com',
+
+                 subject: "Failed: Pipeline ${currentBuild.fullDisplayName}",
+
+                 body: "Check the logs here: ${env.BUILD_URL}"
+
+        }
+
+    }
+
+} // end of pipeline
