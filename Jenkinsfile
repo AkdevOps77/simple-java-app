@@ -6,7 +6,6 @@ pipeline {
         ECR_REPO   = '725018632306.dkr.ecr.us-east-1.amazonaws.com/simple-java-app'
     }
 
-    // This ensures Maven is available on your 'slave' node
     tools {
         maven 'maven3' 
     }
@@ -22,7 +21,6 @@ pipeline {
         stage('SonarQube Analysis') {
             agent { label 'slave' }
             steps {
-                // withSonarQubeEnv is recommended if you have it configured in Jenkins
                 withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                     sh '''
                       mvn verify sonar:sonar \
@@ -45,7 +43,6 @@ pipeline {
         stage('Login to ECR') {
             agent { label 'slave' }
             steps {
-                // FIXED: Using usernamePassword binding for AWS Access Key/Secret
                 withCredentials([usernamePassword(
                     credentialsId: 'aws-credentials', 
                     usernameVariable: 'AWS_ACCESS_KEY_ID', 
@@ -65,37 +62,21 @@ pipeline {
                 sh 'docker push $ECR_REPO:latest'
             }
         }
-    }
-}
+    } // stages block ends here
 
     post {
-
         always {
-
             echo "Pipeline finished."
-
         }
-
         success {
-
             mail to: 'akshay.devops77@gmail.com',
-
                  subject: "Success: Pipeline ${currentBuild.fullDisplayName}",
-
                  body: "Build URL: ${env.BUILD_URL}\nImage pushed to: ${ECR_REPO}"
-
         }
-
         failure {
-
             mail to: 'akshay.devops77@gmail.com',
-
                  subject: "Failed: Pipeline ${currentBuild.fullDisplayName}",
-
                  body: "Check the logs here: ${env.BUILD_URL}"
-
         }
-
     }
-
-} // end of pipeline
+} // pipeline block ends here
