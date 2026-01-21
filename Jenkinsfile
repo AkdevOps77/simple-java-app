@@ -16,13 +16,15 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
-            agent { label 'slave' }   // 👈 SAME NODE AS MAVEN
+            agent { label 'slave' }
             steps {
-                withSonarQubeEnv('SonarQube') {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                     sh '''
                       mvn verify sonar:sonar \
                       -Dsonar.projectKey=simple-java-app \
-                      -Dsonar.projectName=simple-java-app
+                      -Dsonar.projectName=simple-java-app \
+                      -Dsonar.host.url=http://<SLAVE-2-IP>:9000 \
+                      -Dsonar.login=$SONAR_TOKEN
                     '''
                 }
             }
