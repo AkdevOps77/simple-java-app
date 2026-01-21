@@ -43,7 +43,7 @@ pipeline {
 
         stage('Docker Build') {
     steps {
-        sh 'sudo docker build -t simple-java-app:latest .'
+        sh 'docker build -t $ECR_URI:$IMAGE_TAG .'
     }
 }
         stage('Login to ECR') {
