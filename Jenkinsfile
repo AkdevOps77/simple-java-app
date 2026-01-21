@@ -10,28 +10,27 @@ pipeline {
         ECR_REPO   = '725018632306.dkr.ecr.us-east-1.amazonaws.com/simple-java-app'
     }
 
-    stages {
+    // Required to inject Maven path into the shell on all slaves
+    tools {
+        maven 'maven3' 
+    }
 
-        stage('Checkout') {
+    stages {
+        stage('Checkout & Build') {
             agent { label 'slave' }
             steps {
                 checkout scm
-            }
-        }
-
-        stage('Build') {
-            agent { label 'slave' }
-            steps {
-                sh 'which mvn'
-                sh 'mvn -version'
                 sh 'mvn clean package -DskipTests'
+                // Save the build results to share with slave-2
+                stash name: 'full-workspace', includes: '**'
             }
         }
 
         stage('SonarQube Analysis') {
             agent { label 'slave-2' }
             steps {
-                checkout scm
+                // Pulls the code AND the compiled 'target' folder from slave 1
+                unstash 'full-workspace'
                 withSonarQubeEnv('SonarQube') {
                     withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                         sh '''
@@ -47,6 +46,7 @@ pipeline {
         stage('Docker Build') {
             agent { label 'slave' }
             steps {
+                // Workspace is already present on slave-1
                 sh "docker build -t ${ECR_REPO}:latest ."
             }
         }
