@@ -11,18 +11,12 @@ pipeline {
         stage('Build') {
             agent { label 'slave' }
             steps {
-                sh '''
-                  echo "Running on:"
-                  hostname
-                  which mvn
-                  mvn -version
-                  mvn clean package -DskipTests
-                '''
+                sh 'mvn clean package -DskipTests'
             }
         }
 
         stage('SonarQube Analysis') {
-            agent { label 'slave-2' }
+            agent { label 'slave' }   // 👈 SAME NODE AS MAVEN
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh '''
@@ -37,10 +31,7 @@ pipeline {
         stage('Docker Build') {
             agent { label 'slave' }
             steps {
-                sh '''
-                  docker version
-                  docker build -t $ECR_REPO:latest .
-                '''
+                sh 'docker build -t $ECR_REPO:latest .'
             }
         }
 
@@ -52,7 +43,6 @@ pipeline {
                     credentialsId: 'aws-credentials'
                 ]]) {
                     sh '''
-                      aws --version
                       aws ecr get-login-password --region $AWS_REGION \
                       | docker login --username AWS --password-stdin 725018632306.dkr.ecr.$AWS_REGION.amazonaws.com
                     '''
@@ -65,15 +55,6 @@ pipeline {
             steps {
                 sh 'docker push $ECR_REPO:latest'
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Pipeline completed successfully'
-        }
-        failure {
-            echo '❌ Pipeline failed'
         }
     }
 }
